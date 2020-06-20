@@ -52,7 +52,6 @@ def index():
     medical_help_names = list(medical_help_counts.index)
     
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
