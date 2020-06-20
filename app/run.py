@@ -39,9 +39,17 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # Visual #1 - Messages by genre
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+    
+    # Visual #2 - Military messages by genre
+    military_counts = df.query("military=='1'").groupby('genre').count()['message']
+    military_names = list(military_counts.index)
+    
+    # Visual #3 - Medical Help messages by genre
+    medical_help_counts = df.query("medical_help=='1'").groupby('genre').count()['message']
+    medical_help_names = list(medical_help_counts.index)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -63,6 +71,42 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {
+            'data': [
+                Bar(
+                    x=military_names,
+                    y=military_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Military Messages',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Military"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=medical_help_names,
+                    y=medical_help_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Medical Help Messages by Genres',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Medical Help"
+                }
+            }
         }
     ]
     
@@ -78,13 +122,13 @@ def index():
 @app.route('/go')
 def go():
     # save user input in query
-    query = request.args.get('query', '') 
+    query = request.args.get('query', '')
 
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
     classification_results = dict(zip(df.columns[4:], classification_labels))
 
-    # This will render the go.html Please see that file. 
+    # This will render the go.html Please see that file.
     return render_template(
         'go.html',
         query=query,
